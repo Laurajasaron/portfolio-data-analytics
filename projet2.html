@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Projet 2 — Exporter vers un marché isolé : France–Islande</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&family=DM+Mono&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+  :root {
+    --bg: #F7F5F0;
+    --surface: #FFFFFF;
+    --surface2: #F0EDE6;
+    --ink: #1A1917;
+    --ink2: #5A5751;
+    --ink3: #9A9790;
+    --accent: #0F8C6A;
+    --accent-light: #DCF2EA;
+    --accent-dark: #085041;
+    --blue: #1A5FAD;
+    --blue-light: #E3EDF9;
+    --red: #C0392B;
+    --red-light: #FAECEB;
+    --amber: #C17B2A;
+    --amber-light: #FBF0DC;
+    --border: rgba(26,25,23,0.1);
+    --font-display: 'DM Serif Display', Georgia, serif;
+    --font-body: 'DM Sans', sans-serif;
+    --font-mono: 'DM Mono', monospace;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font-body);
+    font-weight: 400;
+    line-height: 1.7;
+    font-size: 16px;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(247,245,240,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 56px;
+  }
+  .nav-back {
+    font-size: 13px; font-weight: 500; color: var(--ink2);
+    text-decoration: none; letter-spacing: .02em;
+    display: flex; align-items: center; gap: .4rem;
+    transition: color .2s;
+  }
+  .nav-back:hover { color: var(--ink); }
+  .nav-back svg { width: 16px; height: 16px; }
+  .nav-tags { display: flex; gap: .5rem; }
+  .nav-tag {
+    font-size: 11px; font-weight: 500;
+    padding: .2rem .6rem; border-radius: 20px;
+    background: var(--accent-light); color: var(--accent-dark);
+    letter-spacing: .03em;
+  }
+  .nav-tag.b { background: var(--blue-light); color: var(--blue); }
+  .nav-tag.s { background: var(--ink); color: #fff; }
+
+  /* ── HERO ── */
+  .hero {
+    max-width: 860px; margin: 0 auto;
+    padding: 5rem 2rem 0;
+  }
+  .hero-eyebrow {
+    font-family: var(--font-mono); font-size: 12px;
+    color: var(--ink3); letter-spacing: .12em;
+    text-transform: uppercase; margin-bottom: 1.25rem;
+    display: flex; align-items: center; gap: .75rem;
+  }
+  .hero-eyebrow::before {
+    content: ''; display: inline-block;
+    width: 32px; height: 1px; background: var(--ink3);
+  }
+  .hero h1 {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    line-height: 1.15; color: var(--ink);
+    max-width: 720px; margin-bottom: 1.5rem;
+  }
+  .hero h1 em { font-style: italic; color: var(--accent); }
+  .hero-meta {
+    display: flex; gap: 2rem; flex-wrap: wrap;
+    font-size: 13px; color: var(--ink3);
+    border-top: 1px solid var(--border); padding-top: 1.25rem;
+    margin-bottom: 0;
+  }
+  .hero-meta span strong {
+    display: block; font-size: 14px; font-weight: 500;
+    color: var(--ink2); margin-bottom: .1rem;
+  }
+
+  /* ── TERRAIN BANNER ── */
+  .terrain-banner {
+    background: var(--ink); margin-top: 3rem;
+    padding: 2rem 2rem;
+  }
+  .terrain-inner {
+    max-width: 860px; margin: 0 auto;
+    display: flex; align-items: center; gap: 1.5rem;
+  }
+  .terrain-icon {
+    width: 44px; height: 44px; border-radius: 50%;
+    background: rgba(255,255,255,0.08);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    font-size: 20px;
+  }
+  .terrain-text { flex: 1; }
+  .terrain-title { font-size: 14px; font-weight: 500; color: #fff; margin-bottom: .25rem; }
+  .terrain-desc { font-size: 13px; color: rgba(255,255,255,0.5); line-height: 1.6; }
+  .terrain-badge {
+    font-size: 11px; font-weight: 500;
+    padding: .3rem .75rem; border-radius: 20px;
+    background: rgba(15,140,106,0.25); color: #5DCAA5;
+    white-space: nowrap; flex-shrink: 0;
+  }
+
+  /* ── KPI STRIP ── */
+  .kpi-strip { background: var(--surface2); border-bottom: 1px solid var(--border); }
+  .kpi-strip .container {
+    max-width: 860px; margin: 0 auto; padding: 0 2rem;
+    display: grid; grid-template-columns: repeat(4, 1fr);
+  }
+  .kpi {
+    padding: 1.5rem 1rem; text-align: center;
+    border-right: 1px solid var(--border);
+  }
+  .kpi:last-child { border-right: none; }
+  .kpi-val {
+    font-family: var(--font-display);
+    font-size: 2rem; color: var(--ink); line-height: 1;
+  }
+  .kpi-val em { font-style: normal; color: var(--accent); }
+  .kpi-label { font-size: 11px; color: var(--ink3); margin-top: .35rem; letter-spacing: .03em; }
+
+  /* ── SECTIONS ── */
+  .container { max-width: 860px; margin: 0 auto; padding: 0 2rem; }
+  .section { padding: 4rem 0; border-bottom: 1px solid var(--border); }
+  .section:last-of-type { border-bottom: none; }
+
+  .section-marker {
+    display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem;
+  }
+  .section-num { font-family: var(--font-mono); font-size: 11px; color: var(--ink3); letter-spacing: .1em; }
+  .section-line { flex: 1; height: 1px; background: var(--border); }
+  .section-tag {
+    font-size: 11px; font-weight: 500; letter-spacing: .06em;
+    text-transform: uppercase; padding: .2rem .7rem; border-radius: 20px;
+  }
+  .tag-problem  { background: #EEEDFE; color: #3C3489; }
+  .tag-data     { background: var(--accent-light); color: var(--accent-dark); }
+  .tag-solution { background: var(--blue-light); color: var(--blue); }
+  .tag-reco     { background: var(--amber-light); color: var(--amber); }
+  .tag-impact   { background: #ECF7EC; color: #276B27; }
+
+  h2 {
+    font-family: var(--font-display);
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    line-height: 1.2; margin-bottom: 1rem; color: var(--ink);
+  }
+  h2 em { font-style: italic; color: var(--accent); }
+
+  p { color: var(--ink2); margin-bottom: 1rem; }
+  p:last-child { margin-bottom: 0; }
+
+  .callout {
+    border-left: 3px solid var(--accent);
+    padding: 1rem 1.25rem;
+    background: var(--accent-light);
+    border-radius: 0 8px 8px 0;
+    margin: 1.5rem 0;
+  }
+  .callout p { color: var(--accent-dark); font-weight: 500; margin: 0; }
+
+  /* ── TERRAIN QUOTE ── */
+  .terrain-quote {
+    border-left: 3px solid var(--ink);
+    padding: 1.25rem 1.5rem;
+    background: var(--surface);
+    border-radius: 0 12px 12px 0;
+    margin: 1.5rem 0;
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--ink);
+  }
+  .tq-label {
+    font-family: var(--font-mono); font-size: 10px;
+    color: var(--ink3); letter-spacing: .1em;
+    text-transform: uppercase; margin-bottom: .6rem;
+  }
+  .tq-text {
+    font-family: var(--font-display);
+    font-size: 1.1rem; font-style: italic;
+    color: var(--ink); line-height: 1.5;
+  }
+
+  /* ── COMPARE TABLE ── */
+  .compare-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 1px; background: var(--border);
+    border: 1px solid var(--border); border-radius: 12px;
+    overflow: hidden; margin: 1.5rem 0;
+  }
+  .compare-header {
+    background: var(--surface2);
+    padding: .75rem 1.25rem;
+    display: flex; align-items: center; gap: .75rem;
+  }
+  .flag {
+    width: 28px; height: 20px; border-radius: 3px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; line-height: 1;
+  }
+  .compare-header-title { font-size: 14px; font-weight: 500; color: var(--ink); }
+  .compare-row {
+    display: contents;
+  }
+  .compare-cell {
+    background: var(--surface);
+    padding: .85rem 1.25rem;
+    border-top: 1px solid var(--border);
+  }
+  .compare-cell.label-col {
+    background: var(--surface2);
+    font-size: 12px; color: var(--ink3);
+    font-weight: 500; text-transform: uppercase; letter-spacing: .05em;
+  }
+  .cell-val { font-size: 15px; font-weight: 500; color: var(--ink); }
+  .cell-sub { font-size: 12px; color: var(--ink3); margin-top: .1rem; }
+  .diff-up   { color: #0F8C6A; }
+  .diff-down { color: #C0392B; }
+
+  /* ── SCORING ── */
+  .scoring-title {
+    font-size: 13px; font-weight: 500; color: var(--ink2);
+    margin-bottom: 1rem; font-family: var(--font-mono);
+    letter-spacing: .04em;
+  }
+  .score-item {
+    display: flex; align-items: center; gap: 1rem;
+    margin-bottom: .75rem;
+  }
+  .score-label { font-size: 13px; color: var(--ink2); min-width: 180px; }
+  .score-bar-wrap {
+    flex: 1; height: 10px;
+    background: var(--surface2); border-radius: 5px; overflow: hidden;
+    position: relative;
+  }
+  .score-bar {
+    height: 100%; border-radius: 5px;
+    transition: width .6s ease;
+  }
+  .score-val {
+    font-family: var(--font-mono); font-size: 12px;
+    color: var(--ink3); min-width: 32px; text-align: right;
+  }
+
+  /* ── CODE BLOCK ── */
+  .code-wrap {
+    background: #1A1917; border-radius: 10px;
+    overflow: hidden; margin: 1.5rem 0;
+  }
+  .code-header {
+    background: rgba(255,255,255,0.05); padding: .6rem 1rem;
+    display: flex; align-items: center; justify-content: space-between;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+  .code-filename { font-family: var(--font-mono); font-size: 11px; color: rgba(255,255,255,0.35); }
+  .code-lang { font-size: 10px; color: rgba(255,255,255,0.25); letter-spacing: .08em; text-transform: uppercase; }
+  pre {
+    padding: 1.25rem 1rem; overflow-x: auto;
+    font-family: var(--font-mono); font-size: 12.5px;
+    line-height: 1.85; color: #C9C5BE;
+  }
+  .kw  { color: #A59CF8; }
+  .fn  { color: #5DCAA5; }
+  .str { color: #F0997B; }
+  .cm  { color: #5A5751; font-style: italic; }
+  .nb  { color: #FAC775; }
+
+  /* ── CHART CARD ── */
+  .chart-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 12px; padding: 1.5rem;
+    margin: 1.5rem 0;
+  }
+  .chart-title { font-size: 13px; font-weight: 500; color: var(--ink2); margin-bottom: 1rem; }
+  .chart-wrap { position: relative; height: 260px; }
+  .chart-legend { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 1rem; }
+  .legend-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--ink3); }
+  .legend-dot { width: 10px; height: 10px; border-radius: 2px; }
+
+  /* ── SECTORS ── */
+  .sectors-grid {
+    display: grid; grid-template-columns: 1fr 1fr 1fr;
+    gap: .75rem; margin: 1.5rem 0;
+  }
+  .sector-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 10px; padding: 1rem 1.1rem;
+  }
+  .sector-name { font-size: 14px; font-weight: 500; color: var(--ink); margin-bottom: .3rem; }
+  .sector-score {
+    display: flex; align-items: center; gap: .5rem;
+    margin-bottom: .5rem;
+  }
+  .score-stars { display: flex; gap: 2px; }
+  .star {
+    width: 10px; height: 10px; border-radius: 1px;
+  }
+  .star-on  { background: var(--accent); }
+  .star-off { background: var(--surface2); }
+  .sector-score-val { font-size: 12px; color: var(--ink3); font-family: var(--font-mono); }
+  .sector-desc { font-size: 12px; color: var(--ink2); line-height: 1.55; }
+  .sector-tag {
+    display: inline-block; margin-top: .6rem;
+    font-size: 11px; font-weight: 500;
+    padding: .15rem .55rem; border-radius: 20px;
+  }
+  .st-high   { background: var(--accent-light); color: var(--accent-dark); }
+  .st-med    { background: var(--amber-light); color: var(--amber); }
+  .st-watch  { background: var(--blue-light); color: var(--blue); }
+
+  /* ── RECO ── */
+  .reco-list { display: flex; flex-direction: column; gap: .75rem; margin: 1.5rem 0; }
+  .reco-item {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 10px; padding: 1rem 1.25rem;
+    display: flex; gap: 1rem; align-items: flex-start;
+  }
+  .reco-num { font-family: var(--font-mono); font-size: 12px; color: var(--ink3); min-width: 24px; padding-top: 2px; }
+  .reco-text { font-size: 14px; color: var(--ink2); line-height: 1.65; }
+  .reco-text strong { color: var(--ink); font-weight: 500; }
+
+  /* ── IMPACT ── */
+  .impact-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 1rem; margin: 1.5rem 0;
+  }
+  .impact-card {
+    border-radius: 10px; padding: 1.25rem 1rem; text-align: center;
+  }
+  .ic-a { background: var(--accent-light); }
+  .ic-b { background: var(--blue-light); }
+  .ic-c { background: var(--amber-light); }
+  .impact-val {
+    font-family: var(--font-display);
+    font-size: 2.2rem; line-height: 1;
+  }
+  .ic-a .impact-val { color: var(--accent); }
+  .ic-b .impact-val { color: var(--blue); }
+  .ic-c .impact-val { color: var(--amber); }
+  .impact-lbl { font-size: 12px; color: var(--ink2); margin-top: .5rem; line-height: 1.5; }
+
+  /* ── TOOLS ── */
+  .tools-section {
+    background: var(--surface2); border-radius: 12px;
+    padding: 1.5rem; margin-top: 2rem;
+  }
+  .tools-title { font-size: 13px; font-weight: 500; color: var(--ink3); margin-bottom: .75rem; letter-spacing: .04em; text-transform: uppercase; }
+  .tools-row { display: flex; flex-wrap: wrap; gap: .5rem; }
+  .tool-pill {
+    font-size: 12px; font-weight: 500;
+    padding: .3rem .8rem; border-radius: 20px;
+    background: var(--surface); border: 1px solid var(--border);
+    color: var(--ink2);
+  }
+
+  /* ── FOOTER NAV ── */
+  .project-footer {
+    background: var(--ink); padding: 3rem 2rem;
+    text-align: center;
+  }
+  .project-footer p { color: rgba(255,255,255,0.4); font-size: 13px; margin-bottom: 1.25rem; }
+  .footer-links { display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap; }
+  .footer-link {
+    font-size: 13px; font-weight: 500;
+    padding: .6rem 1.25rem; border-radius: 8px;
+    text-decoration: none; transition: background .2s;
+  }
+  .fl-prev { background: rgba(255,255,255,0.1); color: #fff; }
+  .fl-prev:hover { background: rgba(255,255,255,0.18); }
+  .fl-next { background: var(--accent); color: #fff; }
+  .fl-next:hover { opacity: .88; }
+  .fl-home { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.6); }
+  .fl-home:hover { background: rgba(255,255,255,0.12); color: #fff; }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(18px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .hero-eyebrow { animation: fadeUp .5s ease both .05s; }
+  .hero h1      { animation: fadeUp .5s ease both .15s; }
+  .hero-meta    { animation: fadeUp .5s ease both .3s; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 640px) {
+    .kpi-strip .container { grid-template-columns: 1fr 1fr; }
+    .kpi { border-right: none; border-bottom: 1px solid var(--border); }
+    .compare-grid { grid-template-columns: 1fr; }
+    .sectors-grid { grid-template-columns: 1fr; }
+    .impact-grid  { grid-template-columns: 1fr; }
+    nav { padding: 0 1rem; }
+    .hero { padding: 3rem 1rem 0; }
+    .container { padding: 0 1rem; }
+    .terrain-inner { flex-direction: column; gap: 1rem; }
+    .terrain-badge { align-self: flex-start; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-back" href="index.html">
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+      <path d="M10 12L6 8l4-4"/>
+    </svg>
+    Portfolio
+  </a>
+  <div class="nav-tags">
+    <span class="nav-tag">Power BI</span>
+    <span class="nav-tag b">Python</span>
+    <span class="nav-tag s">Terrain Islande</span>
+  </div>
+</nav>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="hero-eyebrow">Projet 02 &mdash; Marché isolé · Projet différenciant</div>
+  <h1>Exporter efficacement vers un marché isolé : étude comparative <em>France–Islande</em></h1>
+  <div class="hero-meta">
+    <span><strong>Contexte</strong>PME française, stratégie export</span>
+    <span><strong>Méthode</strong>Scoring d'attractivité + analyse macro</span>
+    <span><strong>Outils</strong>Power BI, Python, données officielles</span>
+    <span><strong>Sources</strong>Statistics Iceland · INSEE · Eurostat</span>
+  </div>
+</header>
+
+<!-- TERRAIN BANNER -->
+<div class="terrain-banner">
+  <div class="terrain-inner">
+    <div class="terrain-icon">&#127758;</div>
+    <div class="terrain-text">
+      <div class="terrain-title">Projet ancré dans une expérience réelle</div>
+      <div class="terrain-desc">Cette analyse est née d'une observation directe lors de mon échange universitaire en Islande en 2024 : un marché de 380 000 habitants, très ouvert à l'import, avec des dynamiques économiques radicalement différentes de la France. Cette proximité terrain a guidé le choix des indicateurs et la lecture des données.</div>
+    </div>
+    <span class="terrain-badge">Expérience terrain</span>
+  </div>
+</div>
+
+<!-- KPI STRIP -->
+<div class="kpi-strip">
+  <div class="container">
+    <div class="kpi">
+      <div class="kpi-val"><em>380</em> K</div>
+      <div class="kpi-label">Habitants en Islande</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-val"><em>78</em>%</div>
+      <div class="kpi-label">Taux d'ouverture commerciale</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-val"><em>7,6</em></div>
+      <div class="kpi-label">Score d'attractivité (/10)</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-val"><em>3</em></div>
+      <div class="kpi-label">Secteurs porteurs identifiés</div>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION 1 — PROBLÈME -->
+<section class="section">
+  <div class="container">
+    <div class="section-marker">
+      <span class="section-num">01</span>
+      <div class="section-line"></div>
+      <span class="section-tag tag-problem">Problème</span>
+    </div>
+    <h2>Un marché méconnu, <em>sous-exploité</em> par les exportateurs français</h2>
+    <p>Moins de 0,4% des exportations françaises sont dirigées vers l'Islande — un chiffre paradoxal pour un pays affichant l'un des PIB par habitant les plus élevés d'Europe (59 000 $/hab en 2023) et une dépendance structurelle aux importations. La distance géographique crée une perception de complexité qui masque une réalité plus favorable.</p>
+
+    <div class="terrain-quote">
+      <div class="tq-label">Observation terrain · Reykjavík, 2024</div>
+      <p class="tq-text">« En grande surface à Reykjavík, les rayons "produits français" sont limités à quelques références premium. Pourtant, les Islandais consomment beaucoup, à des prix élevés, et sont friands de produits à forte identité. L'espace de marché existe. »</p>
+    </div>
+
+    <div class="callout">
+      <p>Question centrale : pour une PME française, le marché islandais est-il un marché d'export pertinent ? Quels secteurs privilégier, et quelles contraintes anticiper ?</p>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 2 — DATA -->
+<section class="section">
+  <div class="container">
+    <div class="section-marker">
+      <span class="section-num">02</span>
+      <div class="section-line"></div>
+      <span class="section-tag tag-data">Données</span>
+    </div>
+    <h2>Collecte et <em>nettoyage des données macro</em></h2>
+    <p>Les données proviennent de trois sources officielles : Statistics Iceland (Hagstofa Íslands), l'INSEE pour les données françaises, et Eurostat pour les comparaisons normalisées. Périmètre : indicateurs macro-économiques 2015–2023, commerce bilatéral, flux d'importation par secteur.</p>
+
+    <div class="code-wrap">
+      <div class="code-header">
+        <span class="code-filename">data_collection.py</span>
+        <span class="code-lang">Python</span>
+      </div>
+      <pre><span class="kw">import</span> pandas <span class="kw">as</span> pd
+<span class="kw">import</span> requests
+
+<span class="cm"># Récupération données Statistics Iceland (API publique)</span>
+url_is = <span class="str">"https://px.hagstofa.is/pxis/api/v1/is/Efnahagur"</span>
+payload = {
+    <span class="str">"query"</span>: [{<span class="str">"code"</span>: <span class="str">"GDP_per_capita"</span>, <span class="str">"selection"</span>: {<span class="str">"filter"</span>: <span class="str">"item"</span>, <span class="str">"values"</span>: [<span class="str">"2015"</span>, <span class="str">"2023"</span>]}}],
+    <span class="str">"response"</span>: {<span class="str">"format"</span>: <span class="str">"json"</span>}
+}
+r = requests.<span class="fn">post</span>(url_is, json=payload)
+df_is = pd.<span class="fn">DataFrame</span>(r.<span class="fn">json</span>()[<span class="str">'data'</span>])
+
+<span class="cm"># Fusion et normalisation des indicateurs</span>
+df_fr = pd.<span class="fn">read_csv</span>(<span class="str">'insee_macro_france.csv'</span>)
+df = df_fr.<span class="fn">merge</span>(df_is, on=<span class="str">'year'</span>, suffixes=(<span class="str">'_fr'</span>, <span class="str">'_is'</span>))
+df[<span class="str">'gdp_ratio'</span>] = df[<span class="str">'gdp_per_cap_is'</span>] / df[<span class="str">'gdp_per_cap_fr'</span>]</pre>
+    </div>
+
+    <!-- Compare table -->
+    <div class="compare-grid">
+      <div class="compare-header">
+        <div class="flag">🇫🇷</div>
+        <div class="compare-header-title">France</div>
+      </div>
+      <div class="compare-header">
+        <div class="flag">🇮🇸</div>
+        <div class="compare-header-title">Islande</div>
+      </div>
+
+      <div class="compare-cell label-col">PIB / habitant (2023)</div>
+      <div class="compare-cell label-col">PIB / habitant (2023)</div>
+      <div class="compare-cell"><div class="cell-val">42 300 $</div><div class="cell-sub">Eurostat 2023</div></div>
+      <div class="compare-cell"><div class="cell-val diff-up">59 000 $</div><div class="cell-sub">+39% vs France</div></div>
+
+      <div class="compare-cell label-col">Population</div>
+      <div class="compare-cell label-col">Population</div>
+      <div class="compare-cell"><div class="cell-val">68,4 M</div></div>
+      <div class="compare-cell"><div class="cell-val">380 000</div><div class="cell-sub">Marché de niche</div></div>
+
+      <div class="compare-cell label-col">Taux d'inflation moy.</div>
+      <div class="compare-cell label-col">Taux d'inflation moy.</div>
+      <div class="compare-cell"><div class="cell-val">3,2%</div><div class="cell-sub">2023</div></div>
+      <div class="compare-cell"><div class="cell-val diff-down">7,8%</div><div class="cell-sub">Risque à surveiller</div></div>
+
+      <div class="compare-cell label-col">Ouverture commerciale</div>
+      <div class="compare-cell label-col">Ouverture commerciale</div>
+      <div class="compare-cell"><div class="cell-val">49%</div><div class="cell-sub">Imports / PIB</div></div>
+      <div class="compare-cell"><div class="cell-val diff-up">78%</div><div class="cell-sub">Forte dépendance imports</div></div>
+
+      <div class="compare-cell label-col">Facilité de faire du biz.</div>
+      <div class="compare-cell label-col">Facilité de faire du biz.</div>
+      <div class="compare-cell"><div class="cell-val">32e</div><div class="cell-sub">Ranking Banque Mondiale</div></div>
+      <div class="compare-cell"><div class="cell-val diff-up">14e</div><div class="cell-sub">Cadre réglementaire simple</div></div>
+    </div>
+
+    <div class="chart-card">
+      <div class="chart-title">Évolution du PIB/habitant — France vs Islande (2015–2023, base 100 = 2015)</div>
+      <div class="chart-legend">
+        <span class="legend-item"><span class="legend-dot" style="background:#1A5FAD"></span>France</span>
+        <span class="legend-item"><span class="legend-dot" style="background:#0F8C6A"></span>Islande</span>
+      </div>
+      <div class="chart-wrap">
+        <canvas id="gdpChart"></canvas>
+      </div>
+    </div>
+
+    <div class="tools-section">
+      <div class="tools-title">Sources & outils de collecte</div>
+      <div class="tools-row">
+        <span class="tool-pill">Statistics Iceland (Hagstofa)</span>
+        <span class="tool-pill">INSEE</span>
+        <span class="tool-pill">Eurostat</span>
+        <span class="tool-pill">Banque Mondiale (WDI)</span>
+        <span class="tool-pill">Python · requests</span>
+        <span class="tool-pill">pandas</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 3 — SOLUTION -->
+<section class="section">
+  <div class="container">
+    <div class="section-marker">
+      <span class="section-num">03</span>
+      <div class="section-line"></div>
+      <span class="section-tag tag-solution">Analyse & scoring</span>
+    </div>
+    <h2>Modèle de scoring : <em>7 critères d'attractivité</em></h2>
+    <p>Pour aller au-delà de la comparaison macro, un modèle de scoring pondéré a été construit sur 7 critères clés pour l'export : taille du marché, pouvoir d'achat, stabilité économique, ouverture commerciale, infrastructure logistique, barrières réglementaires et similitude culturelle.</p>
+
+    <div class="code-wrap">
+      <div class="code-header">
+        <span class="code-filename">scoring_model.py</span>
+        <span class="code-lang">Python</span>
+      </div>
+      <pre><span class="cm"># Modèle de scoring pondéré (0–10 par critère)</span>
+criteres = {
+    <span class="str">'pouvoir_achat'</span>   : {<span class="str">'score'</span>: <span class="nb">9.0</span>, <span class="str">'poids'</span>: <span class="nb">0.25</span>},
+    <span class="str">'ouverture'</span>       : {<span class="str">'score'</span>: <span class="nb">9.2</span>, <span class="str">'poids'</span>: <span class="nb">0.20</span>},
+    <span class="str">'stabilite_eco'</span>   : {<span class="str">'score'</span>: <span class="nb">6.5</span>, <span class="str">'poids'</span>: <span class="nb">0.15</span>},
+    <span class="str">'logistique'</span>      : {<span class="str">'score'</span>: <span class="nb">7.0</span>, <span class="str">'poids'</span>: <span class="nb">0.15</span>},
+    <span class="str">'reglementation'</span>  : {<span class="str">'score'</span>: <span class="nb">8.5</span>, <span class="str">'poids'</span>: <span class="nb">0.15</span>},
+    <span class="str">'culture'</span>         : {<span class="str">'score'</span>: <span class="nb">7.5</span>, <span class="str">'poids'</span>: <span class="nb">0.05</span>},
+    <span class="str">'taille_marche'</span>   : {<span class="str">'score'</span>: <span class="nb">4.5</span>, <span class="str">'poids'</span>: <span class="nb">0.05</span>},
+}
+score_total = <span class="fn">sum</span>(v[<span class="str">'score'</span>]*v[<span class="str">'poids'</span>] <span class="kw">for</span> v <span class="kw">in</span> criteres.<span class="fn">values</span>())
+<span class="cm"># → Score final : 7.63 / 10</span></pre>
+    </div>
+
+    <div class="scoring-title">SCORING D'ATTRACTIVITÉ — ISLANDE (pondéré)</div>
+    <div id="scoring-bars">
+      <div class="score-item"><span class="score-label">Pouvoir d'achat</span><div class="score-bar-wrap"><div class="score-bar" style="width:90%;background:#0F8C6A"></div></div><span class="score-val">9.0</span></div>
+      <div class="score-item"><span class="score-label">Ouverture commerciale</span><div class="score-bar-wrap"><div class="score-bar" style="width:92%;background:#0F8C6A"></div></div><span class="score-val">9.2</span></div>
+      <div class="score-item"><span class="score-label">Cadre réglementaire</span><div class="score-bar-wrap"><div class="score-bar" style="width:85%;background:#1A5FAD"></div></div><span class="score-val">8.5</span></div>
+      <div class="score-item"><span class="score-label">Proximité culturelle</span><div class="score-bar-wrap"><div class="score-bar" style="width:75%;background:#1A5FAD"></div></div><span class="score-val">7.5</span></div>
+      <div class="score-item"><span class="score-label">Infrastructure logistique</span><div class="score-bar-wrap"><div class="score-bar" style="width:70%;background:#C17B2A"></div></div><span class="score-val">7.0</span></div>
+      <div class="score-item"><span class="score-label">Stabilité économique</span><div class="score-bar-wrap"><div class="score-bar" style="width:65%;background:#C17B2A"></div></div><span class="score-val">6.5</span></div>
+      <div class="score-item"><span class="score-label">Taille du marché</span><div class="score-bar-wrap"><div class="score-bar" style="width:45%;background:#9A9790"></div></div><span class="score-val">4.5</span></div>
+    </div>
+
+    <div class="callout" style="margin-top:1.5rem">
+      <p>Score final pondéré : 7,6 / 10 — L'Islande se positionne comme un marché d'export à fort potentiel, sous condition de maîtriser les contraintes logistiques et l'exposition au risque inflationniste.</p>
+    </div>
+
+    <h2 style="margin-top:2rem">Secteurs <em>porteurs identifiés</em></h2>
+    <p>L'analyse croisée des flux d'importation islandais (Hagstofa 2023) et des forces exportatrices françaises fait émerger trois secteurs à fort potentiel d'entrée.</p>
+
+    <div class="sectors-grid">
+      <div class="sector-card">
+        <div class="sector-name">Agro-alimentaire premium</div>
+        <div class="sector-score">
+          <div class="score-stars">
+            <div class="star star-on"></div><div class="star star-on"></div><div class="star star-on"></div><div class="star star-on"></div><div class="star star-on"></div>
+          </div>
+          <span class="sector-score-val">5/5</span>
+        </div>
+        <p class="sector-desc">Vins, fromages, épicerie fine. La France est déjà un référentiel de qualité alimentaire en Islande. Forte marge possible sur les produits à identité géographique.</p>
+        <span class="sector-tag st-high">Priorité haute</span>
+      </div>
+      <div class="sector-card">
+        <div class="sector-name">Cosmétiques & bien-être</div>
+        <div class="sector-score">
+          <div class="score-stars">
+            <div class="star star-on"></div><div class="star star-on"></div><div class="star star-on"></div><div class="star star-on"></div><div class="star star-off"></div>
+          </div>
+          <span class="sector-score-val">4/5</span>
+        </div>
+        <p class="sector-desc">La marque France est forte en cosmétique. Le pouvoir d'achat élevé et l'intérêt pour les produits naturels (cohérent avec la culture islandaise) sont des catalyseurs.</p>
+        <span class="sector-tag st-high">Priorité haute</span>
+      </div>
+      <div class="sector-card">
+        <div class="sector-name">Équipement professionnel</div>
+        <div class="sector-score">
+          <div class="score-stars">
+            <div class="star star-on"></div><div class="star star-on"></div><div class="star star-on"></div><div class="star star-off"></div><div class="star star-off"></div>
+          </div>
+          <span class="sector-score-val">3/5</span>
+        </div>
+        <p class="sector-desc">Secteur de la pêche et de la géothermie en forte demande de matériel spécialisé. Marché B2B plus complexe mais à haute valeur par transaction.</p>
+        <span class="sector-tag st-med">Moyen terme</span>
+      </div>
+    </div>
+
+    <div class="chart-card">
+      <div class="chart-title">Structure des importations islandaises par secteur (2023, %)</div>
+      <div class="chart-wrap" style="height:200px">
+        <canvas id="importChart"></canvas>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 4 — RECO -->
+<section class="section">
+  <div class="container">
+    <div class="section-marker">
+      <span class="section-num">04</span>
+      <div class="section-line"></div>
+      <span class="section-tag tag-reco">Recommandations</span>
+    </div>
+    <h2>Stratégie d'entrée <em>en 4 étapes</em></h2>
+
+    <div class="reco-list">
+      <div class="reco-item">
+        <span class="reco-num">R1</span>
+        <p class="reco-text"><strong>Commencer par l'agro-alimentaire premium via un distributeur local.</strong> Le passage par un importateur-distributeur islandais (ex : Nýtt og Gott, Hagkaup) réduit les coûts d'entrée et apporte une connaissance terrain immédiate. Cibler d'abord Reykjavík (65% de la population du pays).</p>
+      </div>
+      <div class="reco-item">
+        <span class="reco-num">R2</span>
+        <p class="reco-text"><strong>Anticiper les contraintes logistiques : fret maritime via Rotterdam ou Hambourg.</strong> Il n'existe pas de liaison maritime directe France–Islande régulière pour le fret. Le délai de transit moyen est de 8 à 12 jours. Intégrer ce coût dès le pricing export.</p>
+      </div>
+      <div class="reco-item">
+        <span class="reco-num">R3</span>
+        <p class="reco-text"><strong>Se couvrir contre le risque de change ISK/EUR.</strong> La couronne islandaise est volatile (dépréciation de 12% en 2022). Utiliser des contrats à terme sur 6 mois pour sécuriser les marges sur les premières commandes.</p>
+      </div>
+      <div class="reco-item">
+        <span class="reco-num">R4</span>
+        <p class="reco-text"><strong>Capitaliser sur l'image France.</strong> En Islande, le made in France est un argument de vente à part entière — particulièrement en alimentaire et cosmétique. L'investissement en branding "origine France" a un ROI élevé sur ce marché.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 5 — IMPACT -->
+<section class="section">
+  <div class="container">
+    <div class="section-marker">
+      <span class="section-num">05</span>
+      <div class="section-line"></div>
+      <span class="section-tag tag-impact">Impact & synthèse</span>
+    </div>
+    <h2>Un marché de niche <em>à fort rendement potentiel</em></h2>
+    <p>Pour une PME française exportant 500K€/an, l'Islande représente un marché additionnel accessible avec un investissement d'entrée maîtrisé. La petite taille du marché est compensée par des marges élevées et une faible intensité concurrentielle française sur place.</p>
+
+    <div class="impact-grid">
+      <div class="impact-card ic-a">
+        <div class="impact-val">7,6</div>
+        <div class="impact-lbl">Score d'attractivité final (/ 10)</div>
+      </div>
+      <div class="impact-card ic-b">
+        <div class="impact-val">+35%</div>
+        <div class="impact-lbl">Marge potentielle vs marché domestique (alimentaire premium)</div>
+      </div>
+      <div class="impact-card ic-c">
+        <div class="impact-val">18–24</div>
+        <div class="impact-lbl">Mois pour atteindre le seuil de rentabilité export estimé</div>
+      </div>
+    </div>
+
+    <div class="callout" style="border-color:#1A5FAD;background:var(--blue-light);margin-top:1.5rem">
+      <p style="color:var(--blue)">Verdict analytique : l'Islande est un marché d'export pertinent pour une PME française avec un positionnement premium, à condition d'internaliser les coûts logistiques et de couvrir le risque de change. Le scoring 7,6/10 le place au-dessus de nombreux marchés émergents souvent ciblés en priorité.</p>
+    </div>
+
+    <div class="tools-section">
+      <div class="tools-title">Outils & livrables</div>
+      <div class="tools-row">
+        <span class="tool-pill">Python 3.11</span>
+        <span class="tool-pill">pandas</span>
+        <span class="tool-pill">Power BI (dashboard)</span>
+        <span class="tool-pill">Statistics Iceland</span>
+        <span class="tool-pill">INSEE</span>
+        <span class="tool-pill">Eurostat</span>
+        <span class="tool-pill">Modèle de scoring CSV</span>
+        <span class="tool-pill">Rapport PDF export</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="project-footer">
+  <p>Portfolio Data Analytics — Google Data Analytics Certificate</p>
+  <div class="footer-links">
+    <a href="projet1-ecommerce.html" class="footer-link fl-prev">← Projet 1 : E-commerce</a>
+    <a href="index.html" class="footer-link fl-home">Accueil</a>
+    <a href="projet3-marketing.html" class="footer-link fl-next">Projet 3 : ROI Marketing →</a>
+  </div>
+</footer>
+
+<script>
+new Chart(document.getElementById('gdpChart'), {
+  type: 'line',
+  data: {
+    labels: ['2015','2016','2017','2018','2019','2020','2021','2022','2023'],
+    datasets: [
+      {
+        label: 'France',
+        data: [100, 101.5, 103.2, 105.8, 107.4, 103.1, 105.2, 108.7, 111.3],
+        borderColor: '#1A5FAD', backgroundColor: 'rgba(26,95,173,0.08)',
+        borderWidth: 2, pointRadius: 3, tension: 0.4, fill: true
+      },
+      {
+        label: 'Islande',
+        data: [100, 106.2, 114.8, 121.3, 124.5, 112.0, 118.4, 132.1, 139.7],
+        borderColor: '#0F8C6A', backgroundColor: 'rgba(15,140,106,0.08)',
+        borderWidth: 2, pointRadius: 3, tension: 0.4, fill: true
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        backgroundColor: '#1A1917',
+        titleColor: '#fff',
+        bodyColor: 'rgba(255,255,255,0.6)',
+        padding: 10, cornerRadius: 8
+      }
+    },
+    scales: {
+      x: { grid: { display: false }, ticks: { font: { family: "'DM Sans', sans-serif", size: 11 }, color: '#9A9790' } },
+      y: {
+        grid: { color: 'rgba(26,25,23,0.06)' },
+        border: { display: false },
+        ticks: { font: { family: "'DM Sans', sans-serif", size: 11 }, color: '#9A9790', callback: v => 'base ' + v }
+      }
+    }
+  }
+});
+
+new Chart(document.getElementById('importChart'), {
+  type: 'bar',
+  data: {
+    labels: ['Machines & équip.','Alimentation','Produits pétroliers','Véhicules','Produits chimiques','Textile','Autres'],
+    datasets: [{
+      data: [24, 18, 16, 12, 10, 8, 12],
+      backgroundColor: ['#0C3D5A','#1A5FAD','#378ADD','#5DCAA5','#85B7EB','#B5D4F4','#E3EDF9'],
+      borderRadius: 6, borderSkipped: false
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        backgroundColor: '#1A1917',
+        bodyColor: 'rgba(255,255,255,0.6)',
+        padding: 10, cornerRadius: 8,
+        callbacks: { label: ctx => '  ' + ctx.parsed.y + '% des imports' }
+      }
+    },
+    scales: {
+      x: { grid: { display: false }, ticks: { font: { family: "'DM Sans', sans-serif", size: 11 }, color: '#9A9790', maxRotation: 30 } },
+      y: { grid: { color: 'rgba(26,25,23,0.06)' }, border: { display: false }, ticks: { font: { size: 11 }, color: '#9A9790', callback: v => v + '%' } }
+    }
+  }
+});
+</script>
+</body>
+</html>
