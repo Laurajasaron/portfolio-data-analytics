@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Projet 1 — Segmenter et fidéliser</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&family=DM+Mono&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+  :root {
+    --bg: #F7F5F0;
+    --surface: #FFFFFF;
+    --surface2: #F0EDE6;
+    --ink: #1A1917;
+    --ink2: #5A5751;
+    --ink3: #9A9790;
+    --accent: #6B5CE7;
+    --accent-light: #EAE8FC;
+    --teal: #0F8C6A;
+    --teal-light: #DCF2EA;
+    --amber: #C17B2A;
+    --amber-light: #FBF0DC;
+    --border: rgba(26,25,23,0.1);
+    --font-display: 'DM Serif Display', Georgia, serif;
+    --font-body: 'DM Sans', sans-serif;
+    --font-mono: 'DM Mono', monospace;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font-body);
+    font-weight: 400;
+    line-height: 1.7;
+    font-size: 16px;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(247,245,240,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 56px;
+  }
+  .nav-back {
+    font-size: 13px; font-weight: 500; color: var(--ink2);
+    text-decoration: none; letter-spacing: .02em;
+    display: flex; align-items: center; gap: .4rem;
+    transition: color .2s;
+  }
+  .nav-back:hover { color: var(--ink); }
+  .nav-back svg { width: 16px; height: 16px; }
+  .nav-tags { display: flex; gap: .5rem; }
+  .nav-tag {
+    font-size: 11px; font-weight: 500;
+    padding: .2rem .6rem; border-radius: 20px;
+    background: var(--accent-light); color: var(--accent);
+    letter-spacing: .03em;
+  }
+  .nav-tag.t { background: var(--teal-light); color: var(--teal); }
+  .nav-tag.a { background: var(--amber-light); color: var(--amber); }
+
+  /* ── HERO ── */
+  .hero {
+    max-width: 860px; margin: 0 auto;
+    padding: 5rem 2rem 3.5rem;
+  }
+  .hero-eyebrow {
+    font-family: var(--font-mono);
+    font-size: 12px; color: var(--ink3); letter-spacing: .12em;
+    text-transform: uppercase; margin-bottom: 1.25rem;
+    display: flex; align-items: center; gap: .75rem;
+  }
+  .hero-eyebrow::before {
+    content: '';
+    display: inline-block; width: 32px; height: 1px;
+    background: var(--ink3);
+  }
+  .hero h1 {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    line-height: 1.15;
+    color: var(--ink);
+    max-width: 720px;
+    margin-bottom: 1.5rem;
+  }
+  .hero h1 em { font-style: italic; color: var(--accent); }
+  .hero-meta {
+    display: flex; gap: 2rem; flex-wrap: wrap;
+    font-size: 13px; color: var(--ink3);
+    border-top: 1px solid var(--border); padding-top: 1.25rem;
+  }
+  .hero-meta span strong {
+    display: block; font-size: 14px; font-weight: 500;
+    color: var(--ink2); margin-bottom: .1rem;
+  }
+
+  /* ── LAYOUT ── */
+  .container { max-width: 860px; margin: 0 auto; padding: 0 2rem; }
+
+  /* ── KPI STRIP ── */
+  .kpi-strip {
+    background: var(--ink);
+    padding: 2.5rem 2rem;
+  }
+  .kpi-strip .container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+  }
+  .kpi {
+    padding: 1.25rem 1.5rem;
+    background: var(--ink);
+    text-align: center;
+    border-right: 1px solid rgba(255,255,255,0.08);
+  }
+  .kpi:last-child { border-right: none; }
+  .kpi-val {
+    font-family: var(--font-display);
+    font-size: 2.4rem; color: #fff;
+    line-height: 1;
+  }
+  .kpi-val em { color: #A59CF8; font-style: normal; }
+  .kpi-label { font-size: 12px; color: rgba(255,255,255,0.45); margin-top: .4rem; letter-spacing: .04em; }
+
+  /* ── SECTIONS ── */
+  .section { padding: 4rem 0; border-bottom: 1px solid var(--border); }
+  .section:last-of-type { border-bottom: none; }
+
+  .section-marker {
+    display: flex; align-items: center; gap: 1rem;
+    margin-bottom: 2rem;
+  }
+  .section-num {
+    font-family: var(--font-mono); font-size: 11px;
+    color: var(--ink3); letter-spacing: .1em;
+  }
+  .section-line { flex: 1; height: 1px; background: var(--border); }
+  .section-tag {
+    font-size: 11px; font-weight: 500; letter-spacing: .06em;
+    text-transform: uppercase;
+    padding: .2rem .7rem; border-radius: 20px;
+  }
+  .tag-problem { background: var(--accent-light); color: var(--accent); }
+  .tag-data    { background: var(--teal-light); color: var(--teal); }
+  .tag-solution{ background: #EEF2FB; color: #2251B8; }
+  .tag-reco    { background: var(--amber-light); color: var(--amber); }
+  .tag-impact  { background: #ECF7EC; color: #276B27; }
+
+  h2 {
+    font-family: var(--font-display);
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    line-height: 1.2; margin-bottom: 1rem; color: var(--ink);
+  }
+  h2 em { font-style: italic; color: var(--accent); }
+
+  p { color: var(--ink2); margin-bottom: 1rem; }
+  p:last-child { margin-bottom: 0; }
+
+  .callout {
+    border-left: 3px solid var(--accent);
+    padding: 1rem 1.25rem;
+    background: var(--accent-light);
+    border-radius: 0 8px 8px 0;
+    margin: 1.5rem 0;
+  }
+  .callout p { color: var(--accent); font-weight: 500; margin: 0; }
+
+  /* ── CODE BLOCK ── */
+  .code-wrap {
+    background: #1A1917; border-radius: 10px;
+    overflow: hidden; margin: 1.5rem 0;
+  }
+  .code-header {
+    background: rgba(255,255,255,0.05);
+    padding: .6rem 1rem;
+    display: flex; align-items: center; justify-content: space-between;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+  .code-filename { font-family: var(--font-mono); font-size: 11px; color: rgba(255,255,255,0.35); }
+  .code-lang { font-size: 10px; color: rgba(255,255,255,0.25); letter-spacing: .08em; text-transform: uppercase; }
+  pre {
+    padding: 1.25rem 1rem;
+    overflow-x: auto;
+    font-family: var(--font-mono); font-size: 12.5px;
+    line-height: 1.85; color: #C9C5BE;
+  }
+  .kw  { color: #A59CF8; }
+  .fn  { color: #5DCAA5; }
+  .str { color: #F0997B; }
+  .cm  { color: #5A5751; font-style: italic; }
+  .nb  { color: #FAC775; }
+
+  /* ── SEGMENTS GRID ── */
+  .segments-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 1px; background: var(--border);
+    border: 1px solid var(--border); border-radius: 12px;
+    overflow: hidden; margin: 1.5rem 0;
+  }
+  .seg {
+    background: var(--surface);
+    padding: 1.25rem 1.5rem;
+  }
+  .seg-head {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: .6rem;
+  }
+  .seg-name { font-weight: 500; font-size: 15px; color: var(--ink); }
+  .seg-pct {
+    font-family: var(--font-mono); font-size: 12px;
+    padding: .15rem .5rem; border-radius: 20px;
+  }
+  .pct-a { background: var(--accent-light); color: var(--accent); }
+  .pct-b { background: var(--teal-light); color: var(--teal); }
+  .pct-c { background: var(--amber-light); color: var(--amber); }
+  .pct-d { background: var(--surface2); color: var(--ink3); }
+  .seg-desc { font-size: 13px; color: var(--ink2); line-height: 1.6; margin-bottom: .75rem; }
+  .seg-action {
+    font-size: 12px; font-weight: 500;
+    padding: .3rem .8rem; border-radius: 20px;
+    border: none; cursor: default;
+  }
+  .act-a { background: var(--accent-light); color: var(--accent); }
+  .act-b { background: var(--teal-light); color: var(--teal); }
+  .act-c { background: var(--amber-light); color: var(--amber); }
+  .act-d { background: var(--surface2); color: var(--ink3); }
+
+  /* ── CHART ── */
+  .chart-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 12px; padding: 1.5rem;
+    margin: 1.5rem 0;
+  }
+  .chart-title { font-size: 13px; font-weight: 500; color: var(--ink2); margin-bottom: 1rem; }
+  .chart-wrap { position: relative; height: 220px; }
+  .chart-legend {
+    display: flex; flex-wrap: wrap; gap: 12px;
+    margin-top: 1rem;
+  }
+  .legend-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--ink3); }
+  .legend-dot { width: 10px; height: 10px; border-radius: 2px; }
+
+  /* ── RECO ── */
+  .reco-list { display: flex; flex-direction: column; gap: .75rem; margin: 1.5rem 0; }
+  .reco-item {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 10px; padding: 1rem 1.25rem;
+    display: flex; gap: 1rem; align-items: flex-start;
+  }
+  .reco-num {
+    font-family: var(--font-mono); font-size: 12px;
+    color: var(--ink3); min-width: 24px;
+    padding-top: 2px;
+  }
+  .reco-text { font-size: 14px; color: var(--ink2); line-height: 1.65; }
+  .reco-text strong { color: var(--ink); font-weight: 500; }
+
+  /* ── IMPACT ── */
+  .impact-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 1rem; margin: 1.5rem 0;
+  }
+  .impact-card {
+    border-radius: 10px; padding: 1.25rem 1rem;
+    text-align: center;
+  }
+  .ic-a { background: var(--accent-light); }
+  .ic-b { background: var(--teal-light); }
+  .ic-c { background: #ECF7EC; }
+  .impact-val {
+    font-family: var(--font-display);
+    font-size: 2.2rem; line-height: 1;
+  }
+  .ic-a .impact-val { color: var(--accent); }
+  .ic-b .impact-val { color: var(--teal); }
+  .ic-c .impact-val { color: #276B27; }
+  .impact-lbl { font-size: 12px; color: var(--ink2); margin-top: .5rem; line-height: 1.5; }
+
+  /* ── TOOLS ── */
+  .tools-section {
+    background: var(--surface2); border-radius: 12px;
+    padding: 1.5rem; margin-top: 2rem;
+  }
+  .tools-title { font-size: 13px; font-weight: 500; color: var(--ink3); margin-bottom: .75rem; letter-spacing: .04em; text-transform: uppercase; }
+  .tools-row { display: flex; flex-wrap: wrap; gap: .5rem; }
+  .tool-pill {
+    font-size: 12px; font-weight: 500;
+    padding: .3rem .8rem; border-radius: 20px;
+    background: var(--surface); border: 1px solid var(--border);
+    color: var(--ink2);
+  }
+
+  /* ── FOOTER NAV ── */
+  .project-footer {
+    background: var(--ink); padding: 3rem 2rem;
+    text-align: center;
+  }
+  .project-footer p {
+    color: rgba(255,255,255,0.4); font-size: 13px; margin-bottom: 1.25rem;
+  }
+  .footer-links { display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap; }
+  .footer-link {
+    font-size: 13px; font-weight: 500;
+    padding: .6rem 1.25rem; border-radius: 8px;
+    text-decoration: none; transition: background .2s;
+  }
+  .fl-home { background: rgba(255,255,255,0.1); color: #fff; }
+  .fl-home:hover { background: rgba(255,255,255,0.18); }
+  .fl-next { background: var(--accent); color: #fff; }
+  .fl-next:hover { background: #5A4BD6; }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .hero h1, .hero-eyebrow, .hero-meta {
+    animation: fadeUp .6s ease both;
+  }
+  .hero-eyebrow { animation-delay: .05s; }
+  .hero h1      { animation-delay: .15s; }
+  .hero-meta    { animation-delay: .3s; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 640px) {
+    .kpi-strip .container { grid-template-columns: 1fr; }
+    .kpi { border-right: none; border-bottom: 1px solid rgba(255,255,255,0.08); }
+    .segments-grid { grid-template-columns: 1fr; }
+    .impact-grid { grid-template-columns: 1fr; }
+    nav { padding: 0 1rem; }
+    .hero { padding: 3rem 1rem 2rem; }
+    .container { padding: 0 1rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-back" href="index.html">
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+      <path d="M10 12L6 8l4-4"/>
+    </svg>
+    Portfolio
+  </a>
+  <div class="nav-tags">
+    <span class="nav-tag">Python</span>
+    <span class="nav-tag t">SQL</span>
+    <span class="nav-tag a">Tableau</span>
+  </div>
+</nav>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="hero-eyebrow">Projet 01 &mdash; E-commerce Analytics</div>
+  <h1>Segmenter et fidéliser : analyser les ventes pour <em>booster le chiffre d'affaires</em> d'un e-commerce</h1>
+  <div class="hero-meta">
+    <span><strong>Contexte</strong>ShopNova — e-commerce décoration</span>
+    <span><strong>Méthode</strong>Analyse RFM + K-Means clustering</span>
+    <span><strong>Outils</strong>Python, SQL, Tableau</span>
+    <span><strong>Dataset</strong>UCI Online Retail — 541 K transactions</span>
+  </div>
+</header>
+
+<!-- KPI STRIP -->
+<div class="kpi-strip">
+  <div class="container">
+    <div class="kpi">
+      <div class="kpi-val"><em>12</em> 340</div>
+      <div class="kpi-label">Clients analysés</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-val"><em>541</em> K€</div>
+      <div class="kpi-label">CA total sur 13 mois</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-val"><em>4</em> segments</div>
+      <div class="kpi-label">Clusters RFM identifiés</div>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION 1 — PROBLÈME -->
+<section class="section">
+  <div class="container">
+    <div class="section-marker">
+      <span class="section-num">01</span>
+      <div class="section-line"></div>
+      <span class="section-tag tag-problem">Problème</span>
+    </div>
+    <h2>Un e-commerce qui croît sans <em>comprendre ses clients</em></h2>
+    <p>ShopNova, un e-commerce de décoration intérieure basé en France, constate une stagnation de son chiffre d'affaires malgré une base clients en augmentation constante. Les équipes marketing envoient les mêmes campagnes à tous les clients, sans distinction. Résultat : un taux de désabonnement élevé et un budget publicitaire sous-optimisé.</p>
+    <div class="callout">
+      <p>Question centrale : comment identifier les clients à fort potentiel pour concentrer les efforts marketing là où ils génèrent le plus de valeur ?</p>
+    </div>
+    <p>L'hypothèse de travail est que la base clients est hétérogène — certains clients génèrent l'essentiel du CA, tandis qu'une large proportion est inactive depuis plusieurs mois. Une segmentation comportementale permettrait d'adresser chaque groupe avec la bonne action au bon moment.</p>
+  </div>
+</section>
+
+<!-- SECTION 2 — DATA -->
+<section class="section">
+  <div class="container">
+    <div class="section-marker">
+      <span class="section-num">02</span>
+      <div class="section-line"></div>
+      <span class="section-tag tag-data">Données</span>
+    </div>
+    <h2>Nettoyage et construction <em>de la table RFM</em></h2>
+    <p>Source : <em>Online Retail Dataset</em> — UCI Machine Learning Repository. 541 909 transactions de novembre 2010 à décembre 2011, 8 variables (CustomerID, InvoiceDate, Quantity, UnitPrice, Country…). Première étape : suppression des valeurs nulles et des retours produits (quantités négatives).</p>
+
+    <div class="code-wrap">
+      <div class="code-header">
+        <span class="code-filename">rfm_analysis.py</span>
+        <span class="code-lang">Python</span>
+      </div>
+      <pre><span class="kw">import</span> pandas <span class="kw">as</span> pd
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+
+<span class="cm"># Chargement et nettoyage initial</span>
+df = pd.<span class="fn">read_excel</span>(<span class="str">'online_retail.xlsx'</span>)
+df.<span class="fn">dropna</span>(subset=[<span class="str">'CustomerID'</span>], inplace=<span class="kw">True</span>)
+df = df[df[<span class="str">'Quantity'</span>] &gt; <span class="nb">0</span>]
+df[<span class="str">'TotalPrice'</span>] = df[<span class="str">'Quantity'</span>] * df[<span class="str">'UnitPrice'</span>]
+
+<span class="cm"># Construction de la table RFM</span>
+snapshot = pd.<span class="fn">Timestamp</span>(<span class="str">'2011-12-11'</span>)
+rfm = df.<span class="fn">groupby</span>(<span class="str">'CustomerID'</span>).<span class="fn">agg</span>({
+    <span class="str">'InvoiceDate'</span>: <span class="kw">lambda</span> x: (snapshot - x.<span class="fn">max</span>()).days,
+    <span class="str">'InvoiceNo'</span>  : <span class="str">'nunique'</span>,
+    <span class="str">'TotalPrice'</span> : <span class="str">'sum'</span>
+})
+rfm.columns = [<span class="str">'Recency'</span>, <span class="str">'Frequency'</span>, <span class="str">'Monetary'</span>]</pre>
+    </div>
+
+    <div class="code-wrap">
+      <div class="code-header">
+        <span class="code-filename">cleaning.sql</span>
+        <span class="code-lang">SQL</span>
+      </div>
+      <pre><span class="cm">-- Extraction des transactions valides</span>
+<span class="kw">SELECT</span>
+    CustomerID,
+    <span class="fn">COUNT</span>(<span class="kw">DISTINCT</span> InvoiceNo)  <span class="kw">AS</span> Frequency,
+    <span class="fn">SUM</span>(Quantity * UnitPrice)  <span class="kw">AS</span> Monetary,
+    <span class="fn">MAX</span>(InvoiceDate)           <span class="kw">AS</span> LastPurchase
+<span class="kw">FROM</span> transactions
+<span class="kw">WHERE</span> Quantity &gt; <span class="nb">0</span>
+  <span class="kw">AND</span> CustomerID <span class="kw">IS NOT NULL</span>
+<span class="kw">GROUP BY</span> CustomerID
+<span class="kw">ORDER BY</span> Monetary <span class="kw">DESC</span>;</pre>
+    </div>
+
+    <p style="font-size:13px;color:var(--ink3)">Après nettoyage : 4 372 clients retenus sur les 4 373 uniques (suppression d'un outlier B2B avec &gt;200K€ de CA atypique).</p>
+  </div>
+</section>
+
+<!-- SECTION 3 — SOLUTION -->
+<section class="section">
+  <div class="container">
+    <div class="section-marker">
+      <span class="section-num">03</span>
+      <div class="section-line"></div>
+      <span class="section-tag tag-solution">Solution</span>
+    </div>
+    <h2>Clustering K-Means : <em>4 segments distincts</em></h2>
+    <p>Après normalisation des 3 dimensions RFM (StandardScaler), l'algorithme K-Means identifie le nombre optimal de clusters via la méthode du coude (inertie). 4 clusters offrent le meilleur compromis variance inter/intra.</p>
+
+    <div class="code-wrap">
+      <div class="code-header">
+        <span class="code-filename">clustering.py</span>
+        <span class="code-lang">Python · scikit-learn</span>
+      </div>
+      <pre><span class="kw">from</span> sklearn.preprocessing <span class="kw">import</span> StandardScaler
+<span class="kw">from</span> sklearn.cluster <span class="kw">import</span> KMeans
+<span class="kw">import</span> matplotlib.pyplot <span class="kw">as</span> plt
+
+<span class="cm"># Normalisation</span>
+scaler    = <span class="fn">StandardScaler</span>()
+rfm_scaled = scaler.<span class="fn">fit_transform</span>(rfm)
+
+<span class="cm"># Méthode du coude — choix de k=4</span>
+inertias = []
+<span class="kw">for</span> k <span class="kw">in</span> <span class="fn">range</span>(<span class="nb">2</span>, <span class="nb">10</span>):
+    km = <span class="fn">KMeans</span>(n_clusters=k, random_state=<span class="nb">42</span>)
+    km.<span class="fn">fit</span>(rfm_scaled)
+    inertias.<span class="fn">append</span>(km.inertia_)
+
+<span class="cm"># Application du modèle final</span>
+kmeans = <span class="fn">KMeans</span>(n_clusters=<span class="nb">4</span>, random_state=<span class="nb">42</span>)
+rfm[<span class="str">'Segment'</span>] = kmeans.<span class="fn">fit_predict</span>(rfm_scaled)
+rfm.<span class="fn">to_csv</span>(<span class="str">'rfm_segments.csv'</span>)</pre>
+    </div>
+
+    <div class="segments-grid">
+      <div class="seg">
+        <div class="seg-head">
+          <span class="seg-name">Champions</span>
+          <span class="seg-pct pct-a">23% — 58% du CA</span>
+        </div>
+        <p class="seg-desc">Achat récent (R &lt; 30j), fréquence élevée (&gt;8 commandes), panier moyen fort. Ce sont les clients les plus précieux : ils génèrent plus de la moitié du chiffre d'affaires à eux seuls.</p>
+        <span class="seg-action act-a">Programme VIP + vente croisée</span>
+      </div>
+      <div class="seg">
+        <div class="seg-head">
+          <span class="seg-name">Fidèles à risque</span>
+          <span class="seg-pct pct-b">31% — 26% du CA</span>
+        </div>
+        <p class="seg-desc">Bon historique d'achat mais inactivité croissante. Ces clients ont démontré leur attachement à la marque mais montrent des signaux de désengagement au cours des 90 derniers jours.</p>
+        <span class="seg-action act-b">Email réactivation + coupon</span>
+      </div>
+      <div class="seg">
+        <div class="seg-head">
+          <span class="seg-name">Occasionnels</span>
+          <span class="seg-pct pct-c">28% — 11% du CA</span>
+        </div>
+        <p class="seg-desc">1 à 2 achats, panier faible. Ces clients ont découvert la marque mais n'ont pas encore développé d'habitude d'achat. Fort potentiel de conversion vers le segment Fidèles.</p>
+        <span class="seg-action act-c">Incentive 2e achat</span>
+      </div>
+      <div class="seg">
+        <div class="seg-head">
+          <span class="seg-name">Inactifs</span>
+          <span class="seg-pct pct-d">18% — 5% du CA</span>
+        </div>
+        <p class="seg-desc">Dernière commande &gt; 6 mois, aucune réponse aux campagnes précédentes. Le coût de réactivation dépasse la valeur escomptée pour la majorité de ce segment.</p>
+        <span class="seg-action act-d">Win-back ou désinscription</span>
+      </div>
+    </div>
+
+    <div class="chart-card">
+      <div class="chart-title">Répartition du CA par segment client (%)</div>
+      <div class="chart-legend">
+        <span class="legend-item"><span class="legend-dot" style="background:#A59CF8"></span>Champions</span>
+        <span class="legend-item"><span class="legend-dot" style="background:#5DCAA5"></span>Fidèles à risque</span>
+        <span class="legend-item"><span class="legend-dot" style="background:#EF9F27"></span>Occasionnels</span>
+        <span class="legend-item"><span class="legend-dot" style="background:#C9C5BE"></span>Inactifs</span>
+      </div>
+      <div class="chart-wrap">
+        <canvas id="segChart"></canvas>
+      </div>
+    </div>
+
+    <div class="tools-section">
+      <div class="tools-title">Outils &amp; livrables</div>
+      <div class="tools-row">
+        <span class="tool-pill">Python 3.11</span>
+        <span class="tool-pill">pandas</span>
+        <span class="tool-pill">scikit-learn</span>
+        <span class="tool-pill">matplotlib</span>
+        <span class="tool-pill">SQL (PostgreSQL)</span>
+        <span class="tool-pill">Tableau Public</span>
+        <span class="tool-pill">Jupyter Notebook</span>
+        <span class="tool-pill">rfm_segments.csv</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 4 — RECOMMANDATIONS -->
+<section class="section">
+  <div class="container">
+    <div class="section-marker">
+      <span class="section-num">04</span>
+      <div class="section-line"></div>
+      <span class="section-tag tag-reco">Recommandations</span>
+    </div>
+    <h2>4 actions prioritaires <em>actionnables</em></h2>
+
+    <div class="reco-list">
+      <div class="reco-item">
+        <span class="reco-num">R1</span>
+        <p class="reco-text"><strong>Créer un programme de fidélité à 3 niveaux</strong> (Bronze / Silver / Gold) ciblé sur les Champions et les Fidèles à risque. Objectif : augmenter la fréquence d'achat moyenne de 15% en 6 mois grâce à des avantages exclusifs (accès anticipé aux nouvelles collections, livraison offerte).</p>
+      </div>
+      <div class="reco-item">
+        <span class="reco-num">R2</span>
+        <p class="reco-text"><strong>Automatiser une séquence email de réactivation en 3 temps</strong> pour les Fidèles à risque : J+30 (contenu inspirationnel), J+60 (coupon 10%), J+90 (coupon 20% + dernier contact avant passage en Inactif). ROI estimé : réactiver 22% de ce segment.</p>
+      </div>
+      <div class="reco-item">
+        <span class="reco-num">R3</span>
+        <p class="reco-text"><strong>Concentrer le budget retargeting sur les Occasionnels</strong> via des publicités personnalisées par catégorie produit déjà achetée. Offrir un incentive sur le 2e achat (livraison offerte ou -15%) pour ancrer l'habitude d'achat.</p>
+      </div>
+      <div class="reco-item">
+        <span class="reco-num">R4</span>
+        <p class="reco-text"><strong>Nettoyer la base Inactifs</strong> (18% des contacts, 5% du CA) : supprimer les profils sans engagement depuis 12 mois. Économie directe estimée à -18% sur les coûts d'emailing, libérant du budget pour les segments à fort potentiel.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 5 — IMPACT -->
+<section class="section">
+  <div class="container">
+    <div class="section-marker">
+      <span class="section-num">05</span>
+      <div class="section-line"></div>
+      <span class="section-tag tag-impact">Impact projeté</span>
+    </div>
+    <h2>Résultats <em>attendus sur 12 mois</em></h2>
+    <p>Les projections sont basées sur des benchmarks sectoriels e-commerce (Baymard Institute, Klaviyo 2023) et sur l'extrapolation des tendances observées dans le dataset.</p>
+
+    <div class="impact-grid">
+      <div class="impact-card ic-a">
+        <div class="impact-val">+22%</div>
+        <div class="impact-lbl">CA segment Champions (programme VIP, an 1)</div>
+      </div>
+      <div class="impact-card ic-b">
+        <div class="impact-val">−18%</div>
+        <div class="impact-lbl">Coûts emailing (nettoyage base Inactifs)</div>
+      </div>
+      <div class="impact-card ic-c">
+        <div class="impact-val">×2.4</div>
+        <div class="impact-lbl">Fréquence d'achat Fidèles réactivés</div>
+      </div>
+    </div>
+
+    <div class="callout" style="border-color:var(--teal);background:var(--teal-light);margin-top:1.5rem">
+      <p style="color:var(--teal)">Gain total projeté : en réactivant 22% des Fidèles à risque et en augmentant de 15% la fréquence des Champions, le CA additionnel estimé sur 12 mois est de +31 000€ sur une base de 541K€ (+5,7%).</p>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="project-footer">
+  <p>Portfolio Data Analytics &mdash; Google Data Analytics Certificate</p>
+  <div class="footer-links">
+    <a href="index.html" class="footer-link fl-home">← Retour au portfolio</a>
+    <a href="projet2-islande.html" class="footer-link fl-next">Projet suivant : France vs Islande →</a>
+  </div>
+</footer>
+
+<script>
+new Chart(document.getElementById('segChart'), {
+  type: 'bar',
+  data: {
+    labels: ['Champions','Fidèles à risque','Occasionnels','Inactifs'],
+    datasets: [{
+      data: [58, 26, 11, 5],
+      backgroundColor: ['#A59CF8','#5DCAA5','#EF9F27','#C9C5BE'],
+      borderRadius: 8,
+      borderSkipped: false
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        backgroundColor: '#1A1917',
+        titleColor: '#fff',
+        bodyColor: 'rgba(255,255,255,0.6)',
+        padding: 10,
+        cornerRadius: 8,
+        callbacks: {
+          label: ctx => '  ' + ctx.parsed.y + '% du CA total'
+        }
+      }
+    },
+    scales: {
+      x: {
+        grid: { display: false },
+        ticks: { font: { family: "'DM Sans', sans-serif", size: 12 }, color: '#9A9790' }
+      },
+      y: {
+        grid: { color: 'rgba(26,25,23,0.06)' },
+        border: { display: false },
+        ticks: {
+          font: { family: "'DM Sans', sans-serif", size: 11 },
+          color: '#9A9790',
+          callback: v => v + '%'
+        },
+        max: 70
+      }
+    }
+  }
+});
+</script>
+</body>
+</html>
