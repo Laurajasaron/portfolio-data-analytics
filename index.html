@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portfolio — Data Analytics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&family=DM+Mono&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #F7F5F0;
+    --surface: #FFFFFF;
+    --surface2: #F0EDE6;
+    --ink: #1A1917;
+    --ink2: #5A5751;
+    --ink3: #9A9790;
+    --accent: #6B5CE7;
+    --accent-light: #EAE8FC;
+    --teal: #0F8C6A;
+    --teal-light: #DCF2EA;
+    --coral: #C45030;
+    --coral-light: #FAECE7;
+    --amber: #C17B2A;
+    --amber-light: #FBF0DC;
+    --border: rgba(26,25,23,0.1);
+    --font-display: 'DM Serif Display', Georgia, serif;
+    --font-body: 'DM Sans', sans-serif;
+    --font-mono: 'DM Mono', monospace;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font-body);
+    font-weight: 400;
+    line-height: 1.7;
+    font-size: 16px;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(247,245,240,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2.5rem;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 56px;
+  }
+  .nav-logo {
+    font-family: var(--font-mono);
+    font-size: 13px; color: var(--ink2); letter-spacing: .04em;
+    text-decoration: none;
+  }
+  .nav-links { display: flex; gap: 1.75rem; }
+  .nav-links a {
+    font-size: 13px; font-weight: 500;
+    color: var(--ink3); text-decoration: none;
+    letter-spacing: .02em; transition: color .2s;
+  }
+  .nav-links a:hover { color: var(--ink); }
+
+  /* ── HERO ── */
+  .hero {
+    max-width: 980px; margin: 0 auto;
+    padding: 6rem 2.5rem 5rem;
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 4rem; align-items: center;
+  }
+  .hero-left {}
+  .hero-eyebrow {
+    font-family: var(--font-mono); font-size: 11px;
+    color: var(--ink3); letter-spacing: .12em;
+    text-transform: uppercase; margin-bottom: 1.25rem;
+    display: flex; align-items: center; gap: .75rem;
+  }
+  .hero-eyebrow::before {
+    content: ''; display: inline-block;
+    width: 28px; height: 1px; background: var(--ink3);
+  }
+  .hero h1 {
+    font-family: var(--font-display);
+    font-size: clamp(2.4rem, 4vw, 3.4rem);
+    line-height: 1.1; color: var(--ink);
+    margin-bottom: 1.5rem;
+  }
+  .hero h1 em { font-style: italic; color: var(--accent); }
+  .hero-desc {
+    font-size: 15px; color: var(--ink2);
+    line-height: 1.75; margin-bottom: 2rem;
+    max-width: 420px;
+  }
+  .hero-cta {
+    display: inline-flex; align-items: center; gap: .5rem;
+    background: var(--ink); color: #fff;
+    font-size: 14px; font-weight: 500;
+    padding: .7rem 1.5rem; border-radius: 8px;
+    text-decoration: none; letter-spacing: .02em;
+    transition: background .2s, transform .15s;
+  }
+  .hero-cta:hover { background: #2C2C2A; transform: translateY(-1px); }
+  .hero-cta svg { width: 14px; height: 14px; }
+
+  /* Right side — cert card */
+  .hero-right {}
+  .cert-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px; padding: 2rem;
+  }
+  .cert-label {
+    font-family: var(--font-mono); font-size: 10px;
+    color: var(--ink3); letter-spacing: .1em;
+    text-transform: uppercase; margin-bottom: 1.25rem;
+  }
+  .cert-badge {
+    display: flex; align-items: center; gap: .75rem;
+    padding: .75rem 1rem;
+    background: #E8F4F0; border-radius: 10px;
+    margin-bottom: 1.5rem;
+  }
+  .cert-icon {
+    width: 36px; height: 36px; border-radius: 8px;
+    background: #1A73E8;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .cert-icon svg { width: 20px; height: 20px; fill: #fff; }
+  .cert-name { font-size: 13px; font-weight: 500; color: var(--ink); }
+  .cert-issuer { font-size: 11px; color: var(--ink3); margin-top: .1rem; }
+
+  .skills-title {
+    font-size: 11px; font-weight: 500; color: var(--ink3);
+    text-transform: uppercase; letter-spacing: .07em;
+    margin-bottom: .65rem;
+  }
+  .skills-wrap { display: flex; flex-wrap: wrap; gap: .4rem; }
+  .skill {
+    font-size: 12px; padding: .25rem .7rem;
+    border-radius: 20px; border: 1px solid var(--border);
+    background: var(--surface2); color: var(--ink2);
+    font-weight: 400;
+  }
+
+  .context-row {
+    display: flex; gap: 1rem; margin-top: 1.5rem;
+    padding-top: 1.5rem; border-top: 1px solid var(--border);
+  }
+  .ctx-item { flex: 1; }
+  .ctx-label { font-size: 10px; color: var(--ink3); text-transform: uppercase; letter-spacing: .07em; margin-bottom: .25rem; }
+  .ctx-val { font-size: 13px; font-weight: 500; color: var(--ink2); }
+
+  /* ── PROJECTS SECTION ── */
+  .projects-section {
+    max-width: 980px; margin: 0 auto;
+    padding: 0 2.5rem 6rem;
+  }
+  .section-header {
+    display: flex; align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 2.5rem;
+    border-top: 1px solid var(--border); padding-top: 2.5rem;
+  }
+  .section-title {
+    font-family: var(--font-display);
+    font-size: 1.75rem; color: var(--ink);
+  }
+  .section-sub { font-size: 13px; color: var(--ink3); }
+
+  .projects-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 1px; background: var(--border);
+    border: 1px solid var(--border); border-radius: 16px;
+    overflow: hidden;
+  }
+  .project-card {
+    background: var(--surface);
+    padding: 2rem;
+    text-decoration: none;
+    display: block;
+    position: relative;
+    transition: background .2s;
+  }
+  .project-card:hover { background: #FDFCFA; }
+  .project-card.featured {
+    grid-column: 1 / -1;
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 2rem; align-items: start;
+  }
+
+  .project-num {
+    font-family: var(--font-mono); font-size: 11px;
+    color: var(--ink3); letter-spacing: .08em;
+    margin-bottom: 1rem;
+  }
+  .project-tags { display: flex; gap: .4rem; flex-wrap: wrap; margin-bottom: 1rem; }
+  .ptag {
+    font-size: 11px; font-weight: 500;
+    padding: .15rem .55rem; border-radius: 20px;
+  }
+  .pt-purple { background: var(--accent-light); color: var(--accent); }
+  .pt-teal   { background: var(--teal-light);   color: var(--teal); }
+  .pt-coral  { background: var(--coral-light);  color: var(--coral); }
+  .pt-amber  { background: var(--amber-light);  color: var(--amber); }
+  .pt-star   { background: var(--ink); color: #fff; }
+
+  .project-title {
+    font-family: var(--font-display);
+    font-size: 1.3rem; line-height: 1.25;
+    color: var(--ink); margin-bottom: .75rem;
+  }
+  .project-title em { font-style: italic; color: var(--accent); }
+  .project-card.featured .project-title { font-size: 1.55rem; }
+  .project-card:nth-child(3) .project-title em { color: var(--teal); }
+  .project-card:nth-child(4) .project-title em { color: var(--coral); }
+
+  .project-desc {
+    font-size: 13px; color: var(--ink2);
+    line-height: 1.65; margin-bottom: 1.25rem;
+  }
+  .project-tools { display: flex; flex-wrap: wrap; gap: .35rem; }
+  .ptool {
+    font-size: 11px; color: var(--ink3);
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 6px; padding: .15rem .5rem;
+  }
+
+  .project-arrow {
+    position: absolute; bottom: 1.75rem; right: 1.75rem;
+    width: 32px; height: 32px; border-radius: 50%;
+    border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    transition: background .2s, border-color .2s;
+  }
+  .project-card:hover .project-arrow {
+    background: var(--ink); border-color: var(--ink);
+  }
+  .project-arrow svg { width: 14px; height: 14px; stroke: var(--ink3); transition: stroke .2s; }
+  .project-card:hover .project-arrow svg { stroke: #fff; }
+
+  /* featured right side visual */
+  .featured-visual {
+    background: var(--surface2); border-radius: 12px;
+    padding: 1.5rem; display: flex; flex-direction: column; gap: .5rem;
+  }
+  .fv-label { font-size: 11px; color: var(--ink3); font-family: var(--font-mono); margin-bottom: .25rem; }
+  .fv-seg {
+    display: flex; align-items: center; gap: .75rem;
+    font-size: 13px; color: var(--ink2);
+  }
+  .fv-bar-wrap { flex: 1; height: 8px; background: var(--border); border-radius: 4px; overflow: hidden; }
+  .fv-bar { height: 100%; border-radius: 4px; }
+  .fv-pct { font-family: var(--font-mono); font-size: 11px; color: var(--ink3); min-width: 30px; text-align: right; }
+
+  /* ── ABOUT STRIP ── */
+  .about-strip {
+    background: var(--ink);
+    padding: 4rem 2.5rem;
+  }
+  .about-inner {
+    max-width: 980px; margin: 0 auto;
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 4rem; align-items: center;
+  }
+  .about-left h2 {
+    font-family: var(--font-display);
+    font-size: clamp(1.75rem, 3vw, 2.4rem);
+    color: #fff; line-height: 1.15; margin-bottom: 1rem;
+  }
+  .about-left h2 em { font-style: italic; color: #A59CF8; }
+  .about-left p { font-size: 14px; color: rgba(255,255,255,0.5); line-height: 1.75; }
+  .about-right {
+    display: flex; flex-direction: column; gap: .75rem;
+  }
+  .about-item {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 10px; padding: .9rem 1.1rem;
+    display: flex; align-items: center; gap: .9rem;
+  }
+  .about-dot {
+    width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+  }
+  .about-item-text { font-size: 13px; color: rgba(255,255,255,0.65); line-height: 1.5; }
+  .about-item-text strong { color: #fff; font-weight: 500; }
+
+  /* ── FOOTER ── */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 2rem 2.5rem;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .footer-left { font-size: 12px; color: var(--ink3); }
+  .footer-right { display: flex; gap: 1.25rem; }
+  .footer-right a {
+    font-size: 12px; color: var(--ink3); text-decoration: none;
+    transition: color .2s;
+  }
+  .footer-right a:hover { color: var(--ink); }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(18px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .hero-eyebrow { animation: fadeUp .5s ease both; animation-delay: .05s; }
+  .hero h1      { animation: fadeUp .5s ease both; animation-delay: .15s; }
+  .hero-desc    { animation: fadeUp .5s ease both; animation-delay: .25s; }
+  .hero-cta     { animation: fadeUp .5s ease both; animation-delay: .35s; }
+  .hero-right   { animation: fadeUp .6s ease both; animation-delay: .2s; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 760px) {
+    .hero { grid-template-columns: 1fr; gap: 2.5rem; padding: 3.5rem 1.25rem 3rem; }
+    .projects-grid { grid-template-columns: 1fr; }
+    .project-card.featured { grid-column: 1; grid-template-columns: 1fr; }
+    .featured-visual { display: none; }
+    .about-inner { grid-template-columns: 1fr; gap: 2rem; }
+    nav { padding: 0 1.25rem; }
+    .nav-links { gap: 1rem; }
+    .projects-section { padding: 0 1.25rem 4rem; }
+    footer { flex-direction: column; gap: .75rem; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="#">portfolio.analytics</a>
+  <div class="nav-links">
+    <a href="#projets">Projets</a>
+    <a href="#apropos">À propos</a>
+    <a href="mailto:votre@email.com">Contact</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section>
+  <div class="hero">
+    <div class="hero-left">
+      <div class="hero-eyebrow">Data Analytics Portfolio</div>
+      <h1>Transformer la donnée en <em>décisions</em></h1>
+      <p class="hero-desc">Étudiante en échange en Islande, certifiée Google Data Analytics. Je construis des analyses qui répondent à des questions business concrètes — de la segmentation client au marché export.</p>
+      <a class="hero-cta" href="#projets">
+        Découvrir les projets
+        <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M2 7h10M8 3l4 4-4 4"/>
+        </svg>
+      </a>
+    </div>
+    <div class="hero-right">
+      <div class="cert-card">
+        <div class="cert-label">Certification obtenue</div>
+        <div class="cert-badge">
+          <div class="cert-icon">
+            <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+          </div>
+          <div>
+            <div class="cert-name">Google Data Analytics</div>
+            <div class="cert-issuer">Google — Coursera · 2024</div>
+          </div>
+        </div>
+        <div class="skills-title">Compétences couvertes</div>
+        <div class="skills-wrap">
+          <span class="skill">Python</span>
+          <span class="skill">SQL</span>
+          <span class="skill">Power BI</span>
+          <span class="skill">Tableau</span>
+          <span class="skill">Data visualisation</span>
+          <span class="skill">Analyse prédictive</span>
+          <span class="skill">R</span>
+          <span class="skill">Spreadsheets</span>
+        </div>
+        <div class="context-row">
+          <div class="ctx-item">
+            <div class="ctx-label">Situation</div>
+            <div class="ctx-val">Échange en Islande</div>
+          </div>
+          <div class="ctx-item">
+            <div class="ctx-label">Objectif</div>
+            <div class="ctx-val">Candidature Master</div>
+          </div>
+          <div class="ctx-item">
+            <div class="ctx-label">Projets</div>
+            <div class="ctx-val">3 études de cas</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROJECTS -->
+<section id="projets" class="projects-section">
+  <div class="section-header">
+    <h2 class="section-title">Études de cas</h2>
+    <span class="section-sub">3 projets · données réelles</span>
+  </div>
+
+  <div class="projects-grid">
+
+    <!-- Projet 1 — featured -->
+    <a class="project-card featured" href="projet1-ecommerce.html">
+      <div>
+        <div class="project-num">01 &mdash; E-commerce Analytics</div>
+        <div class="project-tags">
+          <span class="ptag pt-purple">Python</span>
+          <span class="ptag pt-teal">SQL</span>
+          <span class="ptag pt-amber">Tableau</span>
+          <span class="ptag pt-purple">K-Means</span>
+        </div>
+        <div class="project-title">Segmenter et fidéliser : analyser les ventes pour <em>booster le CA</em> d'un e-commerce</div>
+        <p class="project-desc">Segmentation RFM de 12 340 clients sur 13 mois de transactions. Identification de 4 clusters comportementaux et construction d'un plan d'action marketing ciblé par segment.</p>
+        <div class="project-tools">
+          <span class="ptool">pandas</span>
+          <span class="ptool">scikit-learn</span>
+          <span class="ptool">Tableau Public</span>
+          <span class="ptool">541 K transactions</span>
+        </div>
+        <div class="project-arrow">
+          <svg viewBox="0 0 14 14" fill="none" stroke-width="1.5"><path d="M2 7h10M8 3l4 4-4 4"/></svg>
+        </div>
+      </div>
+      <div class="featured-visual">
+        <div class="fv-label">CA par segment client</div>
+        <div class="fv-seg">
+          <span style="min-width:110px;font-size:12px">Champions</span>
+          <div class="fv-bar-wrap"><div class="fv-bar" style="width:58%;background:#A59CF8"></div></div>
+          <span class="fv-pct">58%</span>
+        </div>
+        <div class="fv-seg">
+          <span style="min-width:110px;font-size:12px">Fidèles à risque</span>
+          <div class="fv-bar-wrap"><div class="fv-bar" style="width:26%;background:#5DCAA5"></div></div>
+          <span class="fv-pct">26%</span>
+        </div>
+        <div class="fv-seg">
+          <span style="min-width:110px;font-size:12px">Occasionnels</span>
+          <div class="fv-bar-wrap"><div class="fv-bar" style="width:11%;background:#EF9F27"></div></div>
+          <span class="fv-pct">11%</span>
+        </div>
+        <div class="fv-seg">
+          <span style="min-width:110px;font-size:12px">Inactifs</span>
+          <div class="fv-bar-wrap"><div class="fv-bar" style="width:5%;background:#C9C5BE"></div></div>
+          <span class="fv-pct">5%</span>
+        </div>
+        <div style="margin-top:1rem;padding-top:1rem;border-top:1px solid rgba(26,25,23,0.1)">
+          <div style="font-size:28px;font-family:'DM Serif Display',serif;color:#1A1917;line-height:1">+22%</div>
+          <div style="font-size:12px;color:#9A9790;margin-top:.3rem">CA Champions projeté (an 1)</div>
+        </div>
+      </div>
+    </a>
+
+    <!-- Projet 2 -->
+    <a class="project-card" href="projet2-islande.html">
+      <div class="project-num">02 &mdash; Marché isolé · Différenciant</div>
+      <div class="project-tags">
+        <span class="ptag pt-teal">Power BI</span>
+        <span class="ptag pt-teal">Python</span>
+        <span class="ptag pt-star">Expérience terrain</span>
+      </div>
+      <div class="project-title">Exporter vers un marché isolé : étude comparative <em>France–Islande</em></div>
+      <p class="project-desc">Analyse macro-économique comparative entre la France et l'Islande. Scoring d'attractivité marché, identification des secteurs porteurs et recommandations stratégiques d'export — nourries par une expérience d'échange sur place.</p>
+      <div class="project-tools">
+        <span class="ptool">Statistics Iceland</span>
+        <span class="ptool">INSEE</span>
+        <span class="ptool">Power BI</span>
+        <span class="ptool">Données officielles</span>
+      </div>
+      <div class="project-arrow">
+        <svg viewBox="0 0 14 14" fill="none" stroke-width="1.5"><path d="M2 7h10M8 3l4 4-4 4"/></svg>
+      </div>
+    </a>
+
+    <!-- Projet 3 -->
+    <a class="project-card" href="projet3-marketing.html">
+      <div class="project-num">03 &mdash; Marketing Digital</div>
+      <div class="project-tags">
+        <span class="ptag pt-coral">Python</span>
+        <span class="ptag pt-amber">SQL</span>
+        <span class="ptag pt-coral">A/B Testing</span>
+      </div>
+      <div class="project-title">Maximiser le ROI : analyser et optimiser les <em>campagnes marketing</em> digitales</div>
+      <p class="project-desc">Analyse des performances de campagnes multi-canaux (SEA, email, social). Modélisation d'attribution, tests A/B et tableau de bord ROI pour orienter les décisions d'allocation budgétaire.</p>
+      <div class="project-tools">
+        <span class="ptool">pandas</span>
+        <span class="ptool">Tableau</span>
+        <span class="ptool">statsmodels</span>
+        <span class="ptool">Attribution model</span>
+      </div>
+      <div class="project-arrow">
+        <svg viewBox="0 0 14 14" fill="none" stroke-width="1.5"><path d="M2 7h10M8 3l4 4-4 4"/></svg>
+      </div>
+    </a>
+
+  </div>
+</section>
+
+<!-- ABOUT STRIP -->
+<section id="apropos" class="about-strip">
+  <div class="about-inner">
+    <div class="about-left">
+      <h2>Une approche <em>ancrée dans le terrain</em></h2>
+      <p>Chaque projet de ce portfolio part d'une question business réelle. Les données sont exploratoires, le raisonnement est structuré, les recommandations sont actionnables. Pas de visualisation pour la visualisation — chaque graphique répond à une décision à prendre.</p>
+    </div>
+    <div class="about-right">
+      <div class="about-item">
+        <div class="about-dot" style="background:#A59CF8"></div>
+        <div class="about-item-text"><strong>Narration structurée</strong> — chaque projet suit le fil : problème → données → solution → recommandation → impact.</div>
+      </div>
+      <div class="about-item">
+        <div class="about-dot" style="background:#5DCAA5"></div>
+        <div class="about-item-text"><strong>Données ouvertes</strong> — UCI, Statistics Iceland, INSEE. Des sources officielles et reproductibles.</div>
+      </div>
+      <div class="about-item">
+        <div class="about-dot" style="background:#EF9F27"></div>
+        <div class="about-item-text"><strong>Projet différenciant</strong> — l'étude France–Islande est nourrie par une expérience d'échange universitaire sur place.</div>
+      </div>
+      <div class="about-item">
+        <div class="about-dot" style="background:#F0997B"></div>
+        <div class="about-item-text"><strong>Stack complet</strong> — Python, SQL, Power BI, Tableau, analyse prédictive. Certification Google Data Analytics.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <span class="footer-left">Portfolio Data Analytics &mdash; Google Data Analytics Certificate · 2024</span>
+  <div class="footer-right">
+    <a href="https://github.com/" target="_blank">GitHub</a>
+    <a href="https://linkedin.com/" target="_blank">LinkedIn</a>
+    <a href="mailto:votre@email.com">Email</a>
+  </div>
+</footer>
+
+</body>
+</html>
