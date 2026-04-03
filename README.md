@@ -1,7 +1,7 @@
 # Portfolio Data Analytics
 
 Trois études de cas construites autour de problématiques business réelles.
-Certifiée Google Data Analytics (2024).
+Certifiée Google Data Analytics (2025).
 
 ## Projets
 
